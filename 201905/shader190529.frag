@@ -2,6 +2,12 @@ precision mediump float;
 uniform float time;
 uniform vec2 resolution;
 
+mat2 rotate(float r) {
+  float c=cos(r);
+  float s=sin(r);
+  return mat2(c,-s,s,c);
+}
+
 // Author: @patriciogv
 // Title: CellularNoise
 vec2 random( vec2 p ) {
@@ -11,6 +17,7 @@ vec2 random( vec2 p ) {
 // http://iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm
 float sdHexagram( in vec2 p, in float r ){
     const vec4 k = vec4(-0.5,0.8660254038,0.5773502692,1.7320508076);
+    p = p * rotate(time);
     p = abs(p);
     p -= 2.0 * min(dot(k.xy, p),0.0) * k.xy;
     p -= 2.0 * min(dot(k.yx, p),0.0) * k.yx;
