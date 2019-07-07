@@ -8,27 +8,18 @@ mat2 rotate(float r) {
     return mat2( c, -s, s, c);
 }
 
-highp float rand(vec2 co){
-    highp float a = 12.9898;
-    highp float b = 78.233;
-    highp float c = 43758.5453;
-    highp float dt= dot(co.xy ,vec2(a,b));
-    highp float sn= mod(dt,3.14);
-    return fract(sin(sn) * c);
-}
-
-vec3 pattern(vec2 st) {
-  st *= 5.0;
-    vec2 a = mod(st, 1.0);
-    vec2 id = st - a;
-    vec3 color = vec3(sin(id.x + id.y),sin(id.x + id.y - (time * 5.0)),sin(id.x + id.y + time));
-    color += vec3(fract(rand(id) + time));
-  return color;
-}
-
 float sdBox(vec3 p, float s) {
     p = abs(p) - s;
     return max(max(p.x, p.y), p.z);
+}
+
+float sdSphere(vec3 p, float radius) {
+  return length(p) - radius;
+}
+
+vec3 pattern(vec2 st) {
+    vec3 color =  vec3(sin(st.x + st.y),sin(st.x + st.y - (time * 5.0)),sin(st.x + st.y + time));
+    return color;
 }
 
 float distFunc(vec3 p){
@@ -37,13 +28,13 @@ float distFunc(vec3 p){
   p.xy = mod(p.xy, 15.0);
   p -= vec3(0.0,0.0,7.5);
 
-    for(int i=0; i<5; i++) {
-        p = abs(p) - 1.0; // Fold
-        p.xz *= rotate(1.0 + (time * 0.3)); // 回転
-        p.xy *= rotate(1.0 + (time * 0.2)); // 回転
+    for(int i=0; i<6; i++) {
+        p = abs(p) - 1.0;
+        p.xz *= rotate(1.0 + (time * 0.3));
+        p.xy *= rotate(1.0 + (time * 0.2));
     }
 
-    return sdBox(p,1.0);
+    return sdSphere(p,1.0) - sdBox(p,1.0);
 
 }
 mat3 camera(vec3 ro, vec3 ta, vec3 up){
@@ -57,7 +48,7 @@ void main() {
     vec2 st = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
 
     vec3 color = vec3(0.0);
-    vec3 ro = vec3(10.0, 5.0, 0.0);
+    vec3 ro = vec3(20.0, time * 0.1, 0.0);
     vec3 ta = vec3(0.0, sin(time), 0.0);
     vec3 up = normalize(vec3(0, 1, 0));
     vec3 ray = camera(ro, ta, up) * normalize(vec3(st, 1.0));
