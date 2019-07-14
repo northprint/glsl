@@ -14,8 +14,9 @@ float sdBox(vec3 p, float s) {
 }
 
 vec3 pattern(vec2 st) {
-    st *= 2.0;
-    vec3 color =  vec3(fract(sin(st.x + st.y)),fract(sin(st.x + st.y - (time * 5.0))),fract(sin(st.x + st.y + time)));
+    st *= 10.0;
+    vec3 color = vec3(sin(st.x) - cos(st.x));
+    color *= vec3(0.0,0.0,0.8);
     return color;
 }
 
@@ -30,18 +31,17 @@ vec2 pmod(vec2 p, float r) {
 }
 
 float distFunc(vec3 p){
-
     p.yz = pmod(p.yz, 2.0);
     p.xy = mod(p.xy, 8.0);
-    p -= vec3(0.0,4.0,0.0);
+    p -= vec3(2.0,4.0,4.0);
 
     for(int i=0; i<5; i++) {
         p = abs(p) - 1.0;
-        p.xz *= rotate(1.0 + (time * 0.3));
+        p.xz *= rotate(1.0 - (time * 0.1));
         p.xy *= rotate(1.0 + (time * 0.2));
     }
 
-    return sdBox(p,0.5);
+    return sdBox(p,0.4);
 }
 mat3 camera(vec3 ro, vec3 ta, vec3 up){
     vec3 cw = normalize(ta - ro);
@@ -56,7 +56,7 @@ void main() {
     vec3 color = vec3(0.0);
     vec3 ro = vec3(time, 0.0, 0.0);
     vec3 ta = vec3(0.0, 0.0, 0.0);
-    vec3 up = normalize(vec3(0, 1, 0));
+    vec3 up = normalize(vec3(0, 1, tan(time * 0.2)));
     vec3 ray = camera(ro, ta, up) * normalize(vec3(st, 1.0));
 
     vec3 p = ro;

@@ -68,7 +68,6 @@ void main() {
     if (d < 0.01){
       vec2 uv = p.xz;
       vec3 hc = pattern(uv);
-      //vec3 hc = vec3(uv,uv.x);
       float f = exp(-ti * 0.05);
       color = hc * f;
     }
